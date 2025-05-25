@@ -1,0 +1,21 @@
+﻿@model List<ToyShopWebApp.Models.Toy>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Browse Toys</h2>
+<div class="row">
+    @foreach (var toy in Model)
+    {
+        <div class="col-md-4 mb-3">
+            <div class="card">
+                <img class="card-img-top" src="@toy.ImageUrl" />
+                <div class="card-body">
+                    <h5 class="card-title">@toy.Name</h5>
+                    <p>@toy.Description</p>
+                    <p><strong>@toy.Price.ToString("C")</strong></p>
+                    <a href="/Cart/Add/@toy.Id" class="btn btn-primary">Add to Cart</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>

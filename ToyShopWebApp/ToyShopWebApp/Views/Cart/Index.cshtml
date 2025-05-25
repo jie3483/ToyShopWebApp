@@ -1,0 +1,20 @@
+﻿@model List<ToyShopWebApp.Models.Toy>
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Your Cart</h2>
+<table class="table table-bordered">
+    <thead>
+        <tr><th>Name</th><th>Price</th><th>Action</th></tr>
+    </thead>
+    <tbody>
+        @foreach (var toy in Model)
+        {
+            <tr>
+                <td>@toy.Name</td>
+                <td>@toy.Price.ToString("C")</td>
+                <td><a href="/Cart/Remove/@toy.Id" class="btn btn-danger">Remove</a></td>
+            </tr>
+        }
+    </tbody>
+</table>
