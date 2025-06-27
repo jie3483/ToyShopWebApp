@@ -1,0 +1,21 @@
+﻿using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace ToyShopWebApp.Models
+{
+    public class CartItem
+    {
+        [Key]
+        public int Id { get; set; }
+
+        public int UserID { get; set; }
+        public int ToyID { get; set; }
+        public int Quantity { get; set; }
+
+        [ForeignKey("UserID")]
+        public User User { get; set; }
+
+        [ForeignKey("ToyID")]
+        public Toy Toy { get; set; }
+    }
+}
