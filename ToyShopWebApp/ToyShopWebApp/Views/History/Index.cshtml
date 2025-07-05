@@ -1,0 +1,26 @@
+﻿@model List<ToyShopWebApp.Models.Toy>
+
+<h2 class="mb-4">Browsing History</h2>
+
+@if (!Model.Any())
+{
+    <p>You haven't viewed any toys yet.</p>
+}
+else
+{
+    <div class="row">
+        @foreach (var toy in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img class="card-img-top" src="@toy.ImageUrl" alt="@toy.Name" />
+                    <div class="card-body">
+                        <h5 class="card-title">@toy.Name</h5>
+                        <p class="card-text">$@toy.Price</p>
+                        <a href="/Cart/Add/@toy.Id" class="btn btn-sm btn-primary">Add to Cart</a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}

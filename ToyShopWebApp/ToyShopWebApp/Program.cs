@@ -14,9 +14,14 @@ builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+builder.Services.AddSession();
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+app.UseSession();
 
 app.MapDefaultEndpoints();
 

@@ -18,4 +18,6 @@ public class ApplicationDbContext : IdentityDbContext
     public DbSet<CartItem> CartItems { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<ToyInventory> ToyInventories { get; set; }
+    public DbSet<BrowsingHistory> BrowsingHistories { get; set; }
+
 }
