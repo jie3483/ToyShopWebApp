@@ -1,21 +1,30 @@
-﻿@model List<ToyShopWebApp.Models.Toy>
+﻿@model IEnumerable<ToyShopWebApp.Models.Toy>
+
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Browse Toys";
 }
-<h2>Browse Toys</h2>
-<div class="row">
-    @foreach (var toy in Model)
-    {
-        <div class="col-md-4 mb-3">
-            <div class="card">
-                <img class="card-img-top" src="@toy.ImageUrl" />
-                <div class="card-body">
-                    <h5 class="card-title">@toy.Name</h5>
-                    <p>@toy.Description</p>
-                    <p><strong>@toy.Price.ToString("C")</strong></p>
-                    <a href="/Cart/Add/@toy.Id" class="btn btn-primary">Add to Cart</a>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Browse Toys</h2>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+        @foreach (var toy in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    <img src="@toy.ImageUrl" class="card-img-top" alt="@toy.Name" style="height: 200px; object-fit: contain;" />
+                    <div class="card-body">
+                        <h5 class="card-title">@toy.Name</h5>
+                        <p class="card-text">@toy.Description</p>
+                        <p class="card-text"><strong>¥@toy.Price.ToString("F2")</strong></p>
+                    </div>
+                    <div class="card-footer bg-white border-top-0">
+                        <form asp-controller="Cart" asp-action="AddToCart" method="post">
+                            <input type="hidden" name="toyId" value="@toy.Id" />
+                            <button type="submit" class="btn btn-outline-primary w-100">Add to Cart</button>
+                        </form>
+                    </div>
                 </div>
             </div>
-        </div>
-    }
+        }
+    </div>
 </div>
