@@ -1,4 +1,4 @@
-﻿USE ToyShopDB;  -- 确保使用正确的数据库
+﻿USE ToyShopDB; 
 
 INSERT INTO Toys (Name, Description, Price, ImageUrl)
 VALUES 
