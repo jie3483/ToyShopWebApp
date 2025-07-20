@@ -1,47 +1,77 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ToyShopWebApp.Models;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using ToyShopWebApp.Data;
+using ToyShopWebApp.Models;
 
 namespace ToyShopWebApp.Controllers
 {
+    [Authorize]
     public class ToyController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly ToyShopContext _context;
 
-        public ToyController(ApplicationDbContext context)
+        public ToyController(ToyShopContext context)
         {
             _context = context;
         }
 
         public IActionResult Index()
         {
-            var toys = _context.Toys.ToList(); // use real DB data
+            var toys = _context.Toys.ToList();
             return View(toys);
         }
 
-        // NEW METHOD: Record browsing history then show toy
-        public IActionResult ViewToy(int id)
+        // 弹窗加载详情 + 记录历史
+        public IActionResult DetailPartial(int id)
         {
-            var username = HttpContext.Session.GetString("User");
-            var user = _context.Users.FirstOrDefault(u => u.Username == username);
-            if (user == null) return RedirectToAction("Login", "Account");
-
-            bool exists = _context.BrowsingHistories.Any(h => h.UserID == user.UserID && h.ToyID == id);
-            if (!exists)
-            {
-                _context.BrowsingHistories.Add(new BrowsingHistory
-                {
-                    UserID = user.UserID,
-                    ToyID = id,
-                    ViewedAt = DateTime.Now
-                });
-                _context.SaveChanges();
-            }
-
             var toy = _context.Toys.FirstOrDefault(t => t.Id == id);
             if (toy == null) return NotFound();
 
-            return View("ToyDetail", toy);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (!string.IsNullOrEmpty(userId))
+            {
+                if (!_context.BrowsingHistories.Any(h => h.UserID == userId && h.ToyID == id))
+                {
+                    _context.BrowsingHistories.Add(new BrowsingHistory
+                    {
+                        UserID = userId,
+                        ToyID = id,
+                        ViewedAt = DateTime.Now
+                    });
+                    _context.SaveChanges();
+                }
+            }
+
+            return PartialView("_ToyDetailPartial", toy);
+        }
+
+        [HttpPost]
+        public IActionResult AddToCart(int toyId)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return RedirectToAction("Login", "Account");
+
+            var existing = _context.CartItems
+                .FirstOrDefault(c => c.UserID == userId && c.ToyID == toyId);
+
+            if (existing != null)
+            {
+                existing.Quantity++;
+            }
+            else
+            {
+                _context.CartItems.Add(new CartItem
+                {
+                    ToyID = toyId,
+                    UserID = userId,
+                    Quantity = 1
+                });
+            }
+
+            _context.SaveChanges();
+            return RedirectToAction("Index");
         }
     }
 }

@@ -1,79 +1,97 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using ToyShopWebApp.Data;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using ToyShopWebApp.Models;
-using System.Linq;
+using System.Threading.Tasks;
 
 namespace ToyShopWebApp.Controllers
 {
     public class AccountController : Controller
     {
-        private readonly ApplicationDbContext _context;
+        private readonly UserManager<User> _userManager;
+        private readonly SignInManager<User> _signInManager;
 
-        public AccountController(ApplicationDbContext context)
+        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
         {
-            _context = context;
+            _userManager = userManager;
+            _signInManager = signInManager;
         }
 
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Login(string username, string password)
-        {
-            var user = _context.Users.FirstOrDefault(u => u.Username == username && u.PasswordHash == password);
-            if (user != null)
-            {
-                HttpContext.Session.SetString("User", username);
-                return RedirectToAction("Index", "Toy");
-            }
-
-            ViewBag.Error = "Invalid credentials.";
-            return View();
-        }
-
+        // GET: /Account/Register
         [HttpGet]
         public IActionResult Register()
         {
             return View();
         }
 
+        // POST: /Account/Register
         [HttpPost]
-        public IActionResult Register(string username, string password, string email, string address)
+        public async Task<IActionResult> Register(RegisterViewModel model)
         {
-            if (string.IsNullOrWhiteSpace(username) || string.IsNullOrWhiteSpace(password))
+            if (!ModelState.IsValid)
             {
-                ViewBag.Error = "Username and password are required.";
-                return View();
+                return View(model);
             }
 
-            var exists = _context.Users.Any(u => u.Username == username);
-            if (exists)
+            var existingUser = await _userManager.FindByNameAsync(model.Username);
+            if (existingUser != null)
             {
                 ViewBag.Error = "Username already exists.";
-                return View();
+                return View(model);
             }
 
             var user = new User
             {
-                Username = username,
-                PasswordHash = password,
-                Email = email,
-                Address = address
+                UserName = model.Username,
+                Email = model.Email,
+                Address = model.Address,
+                RegisteredAt = DateTime.Now
             };
 
-            _context.Users.Add(user);
-            _context.SaveChanges();
+            var result = await _userManager.CreateAsync(user, model.Password);
+            if (result.Succeeded)
+            {
+                await _signInManager.SignInAsync(user, isPersistent: false);
+                return RedirectToAction("Index", "Toy");
+            }
 
-            HttpContext.Session.SetString("User", username);
-            return RedirectToAction("Index", "Toy");
+            foreach (var error in result.Errors)
+            {
+                ModelState.AddModelError("", error.Description);
+            }
+
+            return View(model);
         }
 
-        public IActionResult Logout()
+        // GET: /Account/Login
+        [HttpGet]
+        public IActionResult Login()
         {
-            HttpContext.Session.Remove("User"); 
+            return View();
+        }
+
+        // POST: /Account/Login
+        [HttpPost]
+        public async Task<IActionResult> Login(LoginViewModel model)
+        {
+            if (!ModelState.IsValid)
+            {
+                return View(model);
+            }
+
+            var result = await _signInManager.PasswordSignInAsync(model.Username, model.Password, isPersistent: false, lockoutOnFailure: false);
+            if (result.Succeeded)
+            {
+                return RedirectToAction("Index", "Toy");
+            }
+
+            ViewBag.Error = "Invalid username or password.";
+            return View(model);
+        }
+
+        // GET: /Account/Logout
+        public async Task<IActionResult> Logout()
+        {
+            await _signInManager.SignOutAsync();
             return RedirectToAction("Index", "Home");
         }
     }

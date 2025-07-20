@@ -9,7 +9,7 @@ namespace ToyShopWebApp.Models
         [Key]
         public int Id { get; set; }
 
-        public int UserID { get; set; }
+        public string UserID { get; set; }
         public int ToyID { get; set; }
 
         public DateTime ViewedAt { get; set; }

@@ -9,7 +9,7 @@ namespace ToyShopWebApp.Models
         [Key]
         public int OrderID { get; set; }
 
-        public int UserID { get; set; }
+        public string UserID { get; set; }
 
         public DateTime OrderDate { get; set; }
 

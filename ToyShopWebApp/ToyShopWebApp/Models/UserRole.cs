@@ -8,7 +8,7 @@ namespace ToyShopWebApp.Models
         [Key]
         public int Id { get; set; }
 
-        public int UserID { get; set; }
+        public string UserID { get; set; }
 
         public string Role { get; set; }
 

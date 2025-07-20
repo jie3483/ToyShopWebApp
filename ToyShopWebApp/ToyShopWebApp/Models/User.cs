@@ -1,15 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace ToyShopWebApp.Models
 {
-    public class User
+    public class User : IdentityUser
     {
-        [Key]
-        public int UserID { get; set; }
+        [MaxLength(200)]
+        public string? Address { get; set; }
 
-        public string Username { get; set; }
-        public string PasswordHash { get; set; }
-        public string Email { get; set; }
-        public string Address { get; set; }
+        public DateTime? RegisteredAt { get; set; }
     }
 }

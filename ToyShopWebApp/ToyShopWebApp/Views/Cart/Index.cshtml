@@ -1,20 +1,44 @@
-﻿@model List<ToyShopWebApp.Models.Toy>
+﻿@model IEnumerable<ToyShopWebApp.Models.CartItem>
+
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Your Cart";
 }
+
 <h2>Your Cart</h2>
-<table class="table table-bordered">
-    <thead>
-        <tr><th>Name</th><th>Price</th><th>Action</th></tr>
-    </thead>
-    <tbody>
-        @foreach (var toy in Model)
-        {
+
+@if (!Model.Any())
+{
+    <p>Your cart is empty.</p>
+}
+else
+{
+    <table class="table table-bordered">
+        <thead>
             <tr>
-                <td>@toy.Name</td>
-                <td>@toy.Price.ToString("C")</td>
-                <td><a href="/Cart/Remove/@toy.Id" class="btn btn-danger">Remove</a></td>
+                <th>Image</th>
+                <th>Name</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Action</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td><img src="@item.Toy.ImageUrl" width="100" /></td>
+                    <td>@item.Toy.Name</td>
+                    <td>¥@item.Toy.Price</td>
+                    <td>@item.Quantity</td>
+                    <td>
+                        <form asp-action="Remove" method="post">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-danger btn-sm">Remove</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

@@ -9,8 +9,8 @@ namespace ToyShopWebApp.Controllers
         {
             var topToys = new List<Toy>
             {
-                new Toy { Id = 2, Name = "Lego Set", Price = 59.99M, ImageUrl = "/images/lego.jpg" },
-                new Toy { Id = 1, Name = "Teddy Bear", Price = 29.99M, ImageUrl = "/images/teddy.jpg" }
+                new Toy { Id = 2, Name = "Basketball Hoop", Price = 34.99M, ImageUrl = "/images/hoop.jpg" },
+                new Toy { Id = 1, Name = "Teddy Bear", Price = 24.99M, ImageUrl = "/images/teddy.jpg" }
             };
             return View(topToys);
         }

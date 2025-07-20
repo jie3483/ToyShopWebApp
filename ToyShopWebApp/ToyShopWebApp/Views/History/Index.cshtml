@@ -1,26 +1,39 @@
 ﻿@model List<ToyShopWebApp.Models.Toy>
+@{
+    ViewData["Title"] = "Browsing History";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
 
-<h2 class="mb-4">Browsing History</h2>
+<h2>Browsing History</h2>
 
-@if (!Model.Any())
+@if (Model == null || !Model.Any())
 {
-    <p>You haven't viewed any toys yet.</p>
+    <div class="alert alert-info">You have not viewed any toys yet.</div>
 }
 else
 {
-    <div class="row">
-        @foreach (var toy in Model)
-        {
-            <div class="col-md-4 mb-4">
-                <div class="card h-100 shadow-sm">
-                    <img class="card-img-top" src="@toy.ImageUrl" alt="@toy.Name" />
-                    <div class="card-body">
-                        <h5 class="card-title">@toy.Name</h5>
-                        <p class="card-text">$@toy.Price</p>
-                        <a href="/Cart/Add/@toy.Id" class="btn btn-sm btn-primary">Add to Cart</a>
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Toy Name</th>
+                <th>Price</th>
+                <th>Category</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var toy in Model)
+            {
+                <tr>
+                    <td>@toy.Name</td>
+                    <td>@toy.Price.ToString("C")</td>
+                    <td>
+                        <a class="btn btn-sm btn-primary" asp-controller="Toy" asp-action="ViewToy" asp-route-id="@toy.Id">
+                            View Again
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 }
