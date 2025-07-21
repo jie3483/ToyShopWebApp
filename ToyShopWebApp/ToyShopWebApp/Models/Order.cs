@@ -17,5 +17,12 @@ namespace ToyShopWebApp.Models
 
         [ForeignKey("UserID")]
         public User User { get; set; }
+
+        public string CustomerName { get; set; }
+        public string CustomerEmail { get; set; }
+        public string ShippingAddress { get; set; }
+        public string PaymentMethod { get; set; }
+
+        public string OrderNumber { get; set; }
     }
 }

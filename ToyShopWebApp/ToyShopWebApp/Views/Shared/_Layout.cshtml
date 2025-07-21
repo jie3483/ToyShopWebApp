@@ -13,64 +13,89 @@
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/ToyShopWebApp.styles.css" asp-append-version="true" />
 </head>
-<body>
-    <div class="wrapper">
-        <header>
-            <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-                <div class="container">
-                    <a class="navbar-brand" href="/">ToyShop</a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navMenu">
-                        <ul class="navbar-nav me-auto">
-                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Toy" asp-action="Index">Toys</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Cart" asp-action="Index">Cart</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="Top" asp-action="Index">Top Sellers</a></li>
-                            <li class="nav-item"><a class="nav-link" asp-controller="History" asp-action="Index">History</a></li>
-                        </ul>
-                        <ul class="navbar-nav">
-                            @if (SignInManager.IsSignedIn(User))
-                            {
-                                <li class="nav-item">
-                                    <span class="nav-link">Welcome, @UserManager.GetUserName(User)!</span>
-                                </li>
-                                <li class="nav-item">
-                                    <form method="post" asp-controller="Account" asp-action="Logout">
-                                        <button type="submit" class="btn btn-link nav-link text-danger">Logout</button>
-                                    </form>
-                                </li>
-                            }
-                            else
-                            {
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
-                                </li>
-                            }
-                        </ul>
-                    </div>
-                </div>
-            </nav>
-        </header>
+<body class="d-flex flex-column min-vh-100">
 
-        <main class="container mt-3 pb-3">
-            @RenderBody()
-        </main>
-
-        <footer class="footer">
+    <!-- ✅ 顶部导航 -->
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container">
-                &copy; 2025 - ToyShopWebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                <a class="navbar-brand" href="/">ToyShop</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navMenu">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Toy" asp-action="Index">Toys</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Cart" asp-action="Index">Cart</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="Top" asp-action="Index">Top Sellers</a></li>
+                        <li class="nav-item"><a class="nav-link" asp-controller="History" asp-action="Index">History</a></li>
+                    </ul>
+                    <ul class="navbar-nav">
+                        @if (SignInManager.IsSignedIn(User))
+                        {
+                            <li class="nav-item">
+                                <span class="nav-link">Welcome, @UserManager.GetUserName(User)!</span>
+                            </li>
+                            <li class="nav-item">
+                                <form method="post" asp-controller="Account" asp-action="Logout">
+                                    <button type="submit" class="btn btn-link nav-link text-danger">Logout</button>
+                                </form>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                            </li>
+                        }
+                    </ul>
+                </div>
             </div>
-        </footer>
-    </div>
+        </nav>
+    </header>
 
+    <!-- ✅ 主内容区域自动撑高 -->
+    <main class="container flex-grow-1 mt-3 pb-3">
+        @RenderBody()
+    </main>
+
+    <!-- ✅ 页脚总在底部 -->
+    <footer class="footer bg-light text-center py-2 border-top">
+        <div class="container">
+            &copy; 2025 - ToyShopWebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        </div>
+    </footer>
+
+    <!-- 脚本区 -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
+
+    <!-- Toast 提示 -->
+    <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
+        <div id="toastSuccess" class="toast align-items-center text-white bg-success border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ✅ Payment completed successfully!
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function () {
+            var showToast = '@TempData["ShowToast"]';
+            if (showToast === 'true') {
+                var toast = new bootstrap.Toast(document.getElementById('toastSuccess'));
+                toast.show();
+            }
+        };
+    </script>
 </body>
 </html>

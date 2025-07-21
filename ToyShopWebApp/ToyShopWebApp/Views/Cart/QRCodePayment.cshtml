@@ -1,0 +1,15 @@
+﻿@{
+    ViewData["Title"] = "QR Code Payment";
+    var orderNumber = Context.Request.Query["orderNumber"];
+}
+<h2 class="text-center">Scan to Pay</h2>
+<p class="text-center">Order Number: <strong>@orderNumber</strong></p>
+
+<div class="text-center">
+    <img src="https://api.qrserver.com/v1/create-qr-code/?data=Pay:@orderNumber&size=200x200" alt="QR Code" />
+</div>
+
+<p class="text-center mt-4">Once you've completed the payment, click the button below.</p>
+<div class="text-center">
+    <a class="btn btn-success" href="@Url.Action("PaymentSuccess")">I Have Paid</a>
+</div>

@@ -3,6 +3,9 @@ html, body {
     margin: 0;
     padding: 0;
     font-size: 14px;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 @media (min-width: 768px) {
@@ -13,20 +16,19 @@ html, body {
 
 /* 页面结构控制 */
 .wrapper {
-    min-height: 100vh;
+    flex: 1;
     display: flex;
     flex-direction: column;
 }
 
 main {
     flex: 1;
-    background-color: rgba(255, 255, 255, 0.85);
     padding: 2rem;
+    background-color: rgba(255, 255, 255, 0.85);
     border-radius: 12px;
-    max-width: 900px;
-    margin: auto;
-    margin-top: 3rem;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    max-width: 900px;
+    margin: 3rem auto 2rem;
 }
 
 /* 页脚贴底 */
@@ -84,10 +86,9 @@ button, .btn {
     display: block;
 }
 
-/* 全局背景和字体 */
+/* 全局背景 */
 body {
     background: linear-gradient(to bottom right, #a8e6ff, #ffd6f6);
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
 /* 焦点样式 */
