@@ -14,60 +14,59 @@
     <link rel="stylesheet" href="~/ToyShopWebApp.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
-            <div class="container">
-                <a class="navbar-brand" href="/">ToyShop</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navMenu">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Toy" asp-action="Index">Toys</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Cart" asp-action="Index">Cart</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="Top" asp-action="Index">Top Sellers</a></li>
-                        <li class="nav-item"><a class="nav-link" asp-controller="History" asp-action="Index">History</a></li>
-                    </ul>
-
-                    <ul class="navbar-nav">
-                        @if (SignInManager.IsSignedIn(User))
-                        {
-                            <li class="nav-item">
-                                <span class="nav-link">Welcome, @UserManager.GetUserName(User)!</span>
-                            </li>
-                            <li class="nav-item">
-                                <form method="post" asp-controller="Account" asp-action="Logout">
-                                    <button type="submit" class="btn btn-link nav-link text-danger">Logout</button>
-                                </form>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
-                            </li>
-                        }
-                    </ul>
+    <div class="wrapper">
+        <header>
+            <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
+                <div class="container">
+                    <a class="navbar-brand" href="/">ToyShop</a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse" id="navMenu">
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item"><a class="nav-link" asp-controller="Home" asp-action="Index">Home</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Toy" asp-action="Index">Toys</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Cart" asp-action="Index">Cart</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="Top" asp-action="Index">Top Sellers</a></li>
+                            <li class="nav-item"><a class="nav-link" asp-controller="History" asp-action="Index">History</a></li>
+                        </ul>
+                        <ul class="navbar-nav">
+                            @if (SignInManager.IsSignedIn(User))
+                            {
+                                <li class="nav-item">
+                                    <span class="nav-link">Welcome, @UserManager.GetUserName(User)!</span>
+                                </li>
+                                <li class="nav-item">
+                                    <form method="post" asp-controller="Account" asp-action="Logout">
+                                        <button type="submit" class="btn btn-link nav-link text-danger">Logout</button>
+                                    </form>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Account" asp-action="Login">Login</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" asp-controller="Account" asp-action="Register">Register</a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
                 </div>
-            </div>
-        </nav>
-    </header>
+            </nav>
+        </header>
 
-    <div class="container mt-3">
-        <main role="main" class="pb-3">
+        <main class="container mt-3 pb-3">
             @RenderBody()
         </main>
-    </div>
 
-    <footer class="border-top footer text-muted mt-4">
-        <div class="container">
-            &copy; 2025 - ToyShopWebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-        </div>
-    </footer>
+        <footer class="footer">
+            <div class="container">
+                &copy; 2025 - ToyShopWebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            </div>
+        </footer>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>

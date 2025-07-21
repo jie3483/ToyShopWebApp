@@ -1,35 +1,26 @@
-html {
-  font-size: 14px;
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-size: 14px;
 }
 
 @media (min-width: 768px) {
-  html {
-    font-size: 16px;
-  }
+    html {
+        font-size: 16px;
+    }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
-  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
-}
-
-html {
-  position: relative;
-  min-height: 100%;
-}
-
-body {
-  margin-bottom: 60px;
-}
-
-body {
-    background: linear-gradient(to bottom right, #a8e6ff, #ffd6f6);
+/* 页面结构控制 */
+.wrapper {
     min-height: 100vh;
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    display: flex;
+    flex-direction: column;
 }
 
 main {
-    background-color: rgba(255, 255, 255, 0.85); 
+    flex: 1;
+    background-color: rgba(255, 255, 255, 0.85);
     padding: 2rem;
     border-radius: 12px;
     max-width: 900px;
@@ -38,13 +29,24 @@ main {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
+/* 页脚贴底 */
+footer.footer {
+    margin-top: auto;
+    font-size: 14px;
+    padding: 2px 0;
+    background-color: #f8f9fa;
+    color: #666;
+    text-align: center;
+    border-top: 1px solid #ccc;
+}
+
+/* 导航栏样式 */
 .navbar {
-    background-color: #fdf6e3; 
+    background-color: #fdf6e3;
     backdrop-filter: blur(6px);
     box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-    
     .navbar a {
         color: #4a4a4a;
         font-weight: 600;
@@ -53,14 +55,13 @@ main {
         transition: color 0.3s ease;
     }
 
-        
         .navbar a:hover {
-            color: #b58900; 
+            color: #b58900;
         }
 
-
+/* 按钮样式 */
 button, .btn {
-    background-color: #fdf6e3; 
+    background-color: #fdf6e3;
     border: 1px solid #ccc;
     padding: 0.6rem 1.2rem;
     border-radius: 6px;
@@ -70,8 +71,28 @@ button, .btn {
     transition: background 0.3s ease, transform 0.2s ease;
 }
 
-   
     button:hover, .btn:hover {
         background-color: #f5e9d6;
         transform: scale(1.05);
     }
+
+/* 图片居中样式 */
+.card-img-top {
+    width: 180px;
+    height: auto;
+    margin: auto;
+    display: block;
+}
+
+/* 全局背景和字体 */
+body {
+    background: linear-gradient(to bottom right, #a8e6ff, #ffd6f6);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 焦点样式 */
+.btn:focus, .btn:active:focus,
+.btn-link.nav-link:focus, .form-control:focus,
+.form-check-input:focus {
+    box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
