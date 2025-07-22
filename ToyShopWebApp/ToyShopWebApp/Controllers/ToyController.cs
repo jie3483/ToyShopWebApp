@@ -10,9 +10,9 @@ namespace ToyShopWebApp.Controllers
     [Authorize]
     public class ToyController : Controller
     {
-        private readonly ToyShopContext _context;
+        private readonly ApplicationDbContext _context;
 
-        public ToyController(ToyShopContext context)
+        public ToyController(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -23,11 +23,14 @@ namespace ToyShopWebApp.Controllers
             return View(toys);
         }
 
-        // 弹窗加载详情 + 记录历史
+        // ✅ 弹窗加载详情 + 记录历史 + 点击次数
         public IActionResult DetailPartial(int id)
         {
             var toy = _context.Toys.FirstOrDefault(t => t.Id == id);
             if (toy == null) return NotFound();
+
+            toy.ClickCount++; // ✅ 每次查看详情增加点击数
+            _context.SaveChanges();
 
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (!string.IsNullOrEmpty(userId))

@@ -1,6 +1,4 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
-}
+﻿@model List<ToyShopWebApp.Models.Toy>
 
 @{
     ViewData["Title"] = "Home Page";
@@ -15,19 +13,17 @@
     </div>
 
     <div class="row">
-        <!-- 玩具展示区 -->
+        <!-- 主内容区（可改为展示所有玩具） -->
         <div class="col-md-9">
             <h3 class="mb-3">Toys</h3>
             <div class="row">
-                <!-- 示例玩具卡片 -->
                 <div class="col-md-6 mb-4">
                     <div class="card h-100">
-                        <img src="/images/hoop.jpg" class="card-img-top" alt="Lego Set">
+                        <img src="/images/hoop.jpg" class="card-img-top" alt="Basketball Hoop">
                         <div class="card-body">
-                            <h5 class="card-title">Lego Set</h5>
-                            <p class="card-text">Children's Puzzle Legos.</p>
-                            <p class="card-text"><strong>$59.99</strong></p>
-                            <a href="#" class="btn btn-primary">Add to Cart</a>
+                            <h5 class="card-title">Basketball Hoop</h5>
+                            <p class="card-text">Indoor mini hoop.</p>
+                            <p class="card-text"><strong>$34.99</strong></p>
                         </div>
                     </div>
                 </div>
@@ -37,25 +33,63 @@
                         <img src="/images/teddy.jpg" class="card-img-top" alt="Teddy Bear">
                         <div class="card-body">
                             <h5 class="card-title">Teddy Bear</h5>
-                            <p class="card-text">Cute Teddy Bear Plush Toy.</p>
+                            <p class="card-text">Soft Teddy Bear Plush Toy.</p>
                             <p class="card-text"><strong>$29.99</strong></p>
-                            <a href="#" class="btn btn-primary">Add to Cart</a>
                         </div>
                     </div>
                 </div>
-
-                <!-- 可继续添加更多玩具 -->
             </div>
         </div>
 
-        <!-- 热门玩具区 -->
+        <!-- Top Toys (点击弹窗) -->
         <div class="col-md-3">
-            <h4>Top Toys</h4>
+            <h4 class="mb-3">Top Toys</h4>
             <ul class="list-group">
-                <li class="list-group-item"><a href="#">Toy 1</a></li>
-                <li class="list-group-item"><a href="#">Toy 2</a></li>
-                <li class="list-group-item"><a href="#">Toy 3</a></li>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var toy in Model)
+                    {
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="javascript:void(0);" class="top-toy-link" data-url="@Url.Action("DetailPartial", "Toy", new { id = toy.Id })">
+                                @toy.Name
+                            </a>
+                            <span class="badge bg-primary rounded-pill">@toy.ClickCount clicks</span>
+                        </li>
+                    }
+                }
+                else
+                {
+                    <li class="list-group-item text-muted">No top toys yet.</li>
+                }
             </ul>
         </div>
+
+            <!-- 模态弹窗容器 -->
+        <!-- 🔍 模态弹窗容器 -->
+        <div class="modal fade" id="toyDetailModal" tabindex="-1" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-body" id="toyDetailContent">
+                        <!-- 内容通过 AJAX 加载 -->
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+  </div>
 </div>
+        @section Scripts {
+            <script>
+                $(document).ready(function () {
+                    $('.top-toy-link').click(function () {
+                        var url = $(this).data('url');
+                        $.get(url, function (data) {
+                            $('#toyDetailContent').html(data);
+                            var modal = new bootstrap.Modal(document.getElementById('toyDetailModal'));
+                            modal.show();
+                        });
+                    });
+                });
+            </script>
+    }
+       
