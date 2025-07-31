@@ -43,7 +43,6 @@ namespace ToyShopWebApp.Controllers
             }
 
             _context.SaveChanges();
-
             return RedirectToAction("Index", "Toy");
         }
 
@@ -76,7 +75,32 @@ namespace ToyShopWebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        // ✅ Checkout 提交订单并生成订单编号
+        // ✅ 新增：增加数量
+        [HttpPost]
+        public IActionResult Increase(int id)
+        {
+            var item = _context.CartItems.Include(c => c.Toy).FirstOrDefault(c => c.Id == id);
+            if (item != null)
+            {
+                item.Quantity++;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+
+        // ✅ 新增：减少数量（为 1 时仍保留）
+        [HttpPost]
+        public IActionResult Decrease(int id)
+        {
+            var item = _context.CartItems.Include(c => c.Toy).FirstOrDefault(c => c.Id == id);
+            if (item != null && item.Quantity > 1)
+            {
+                item.Quantity--;
+                _context.SaveChanges();
+            }
+            return RedirectToAction("Index");
+        }
+
         [HttpPost]
         public IActionResult Checkout(string Name, string Email, string Address, string PaymentMethod)
         {
@@ -94,7 +118,6 @@ namespace ToyShopWebApp.Controllers
 
             decimal totalAmount = cartItems.Sum(item => item.Toy.Price * item.Quantity);
 
-            // ✅ 生成唯一订单编号
             string orderNumber = $"ORD{DateTime.Now:yyyyMMddHHmmssfff}";
 
             var order = new Order
@@ -112,31 +135,26 @@ namespace ToyShopWebApp.Controllers
             _context.Orders.Add(order);
             _context.SaveChanges();
 
-            // ✅ 清空购物车
             _context.CartItems.RemoveRange(cartItems);
             _context.SaveChanges();
 
-            // ✅ 根据支付方式跳转
             if (PaymentMethod == "QR")
                 return RedirectToAction("PayQR", new { orderNumber = orderNumber });
             else
                 return RedirectToAction("PaymentSuccess");
         }
 
-        // ✅ 支付成功页面，含 Toast 提示触发器
         public IActionResult PaymentSuccess()
         {
-            TempData["ShowToast"] = "true"; // ⬅️ 用于显示成功提示
+            TempData["ShowToast"] = "true";
             return View();
         }
 
-        // ✅ 支付失败页面（备用）
         public IActionResult PaymentFailed()
         {
             return View();
         }
 
-        // ✅ 模拟扫码支付页面，接收订单编号
         public IActionResult PayQR(string orderNumber)
         {
             ViewBag.OrderNumber = orderNumber;

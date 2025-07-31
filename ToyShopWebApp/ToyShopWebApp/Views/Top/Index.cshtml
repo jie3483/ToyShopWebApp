@@ -1,11 +1,11 @@
 ﻿@model List<ToyShopWebApp.Models.Toy>
 
 @{
-    ViewData["Title"] = "Top Toys";
+    ViewData["Title"] = "Recently Viewed Toys";
 }
 
 <div class="container mt-4">
-    <h2 class="mb-4 text-center">Top Selling Toys</h2>
+    <h2 class="mb-4 text-center">🕓 Recently Viewed Toys</h2>
 
     @if (Model != null && Model.Any())
     {
@@ -13,22 +13,52 @@
             @foreach (var toy in Model)
             {
                 <li class="list-group-item d-flex align-items-center">
-                    <img src="@Url.Content(toy.ImageUrl)" alt="@toy.Name" class="top-toy-img" />
+                    <img src="@toy.ImageUrl" alt="@toy.Name" class="top-toy-img" style="width: 100px; height: auto;" />
                     <div class="ms-3 flex-grow-1">
                         <h5 class="mb-1">@toy.Name</h5>
-                        <p class="mb-1 text-muted">@toy.Description</p>
                         <div>
                             <strong>$@toy.Price</strong>
                             <span class="badge bg-primary ms-2">@toy.ClickCount clicks</span>
                         </div>
                     </div>
-                    <a asp-controller="Toy" asp-action="DetailPartial" asp-route-id="@toy.Id" class="btn btn-outline-info">View</a>
+                    <button class="btn btn-outline-info view-detail-btn" data-toy-id="@toy.Id">View</button>
                 </li>
             }
         </ul>
     }
     else
     {
-        <div class="alert alert-warning">No top toys available at the moment.</div>
+        <div class="alert alert-warning">You haven't viewed any toys yet.</div>
     }
 </div>
+
+<!-- ✅ Modal: Toy Detail -->
+<div class="modal fade" id="toyDetailModal" tabindex="-1" aria-labelledby="toyDetailLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="toyDetailLabel">Toy Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="toyDetailContent">
+                <!-- Content will be loaded here -->
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $(".view-detail-btn").click(function () {
+                var toyId = $(this).data("toy-id");
+
+                $.get("/Toy/DetailPartial/" + toyId, function (data) {
+                    $("#toyDetailContent").html(data);
+                    var modal = new bootstrap.Modal(document.getElementById('toyDetailModal'));
+                    modal.show();
+                });
+            });
+        });
+    </script>
+}

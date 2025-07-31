@@ -1,39 +1,33 @@
-﻿@model List<ToyShopWebApp.Models.Toy>
+﻿@model List<ToyShopWebApp.ViewModels.HistoryViewModel>
+
 @{
-    ViewData["Title"] = "Browsing History";
-    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewData["Title"] = "Browse history";
 }
 
-<h2>Browsing History</h2>
+<h2 class="mb-4">🕓 My browsing history</h2>
 
-@if (Model == null || !Model.Any())
+<form asp-controller="History" asp-action="ClearHistory" method="post" onsubmit="return confirm('Are you sure you want to clear all browsing history?');">
+    <button type="submit" class="btn btn-danger mb-3">Clear All History</button>
+</form>
+
+@if (!Model.Any())
 {
-    <div class="alert alert-info">You have not viewed any toys yet.</div>
+    <p class="text-muted">There is no browsing record for the time being.</p>
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th>Toy Name</th>
-                <th>Price</th>
-                <th>Category</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var toy in Model)
-            {
-                <tr>
-                    <td>@toy.Name</td>
-                    <td>@toy.Price.ToString("C")</td>
-                    <td>
-                        <a class="btn btn-sm btn-primary" asp-controller="Toy" asp-action="ViewToy" asp-route-id="@toy.Id">
-                            View Again
-                        </a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+    <div class="list-group">
+        @foreach (var item in Model)
+        {
+            <div class="list-group-item d-flex align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <img src="@item.Toy.ImageUrl" alt="@item.Toy.Name" style="width: 80px; height: auto; object-fit: contain;" class="me-3" />
+                    <div>
+                        <strong>@item.Toy.Name</strong><br />
+                        <small class="text-muted">Viewed at: @item.ViewedAt.ToString("yyyy-MM-dd HH:mm")</small>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 }

@@ -1,40 +1,53 @@
-﻿@model IEnumerable<ToyShopWebApp.Models.CartItem>
+﻿@model List<ToyShopWebApp.Models.CartItem>
+
 @{
-    Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewData["Title"] = "Your Cart";
-    decimal totalAmount = Model.Sum(item => item.Toy.Price * item.Quantity);
+    ViewData["Title"] = "购物车";
 }
 
-<h2>Your Cart</h2>
+<h2>My shopping cart</h2>
 
 @if (!Model.Any())
 {
-    <p>Your cart is empty.</p>
+    <p>The shopping cart is empty.</p>
 }
 else
 {
-    <table class="table table-bordered">
+    <table class="table">
         <thead>
             <tr>
-                <th>Image</th>
-                <th>Name</th>
+                <th>Toy</th>
+                <th>Picture</th>
                 <th>Price</th>
                 <th>Quantity</th>
-                <th>Action</th>
+                <th>Calculate</th>
+                <th>Operation</th>
             </tr>
         </thead>
         <tbody>
             @foreach (var item in Model)
             {
                 <tr>
-                    <td><img src="@item.Toy.ImageUrl" width="100" /></td>
                     <td>@item.Toy.Name</td>
-                    <td>¥@item.Toy.Price</td>
-                    <td>@item.Quantity</td>
+                    <td><img src="~/images/@item.Toy.ImageUrl" style="width: 80px;" /></td>
+                    <td>$@item.Toy.Price</td>
                     <td>
-                        <form asp-action="Remove" method="post">
+                        <form method="post" asp-controller="Cart" asp-action="Decrease" class="d-inline">
                             <input type="hidden" name="id" value="@item.Id" />
-                            <button class="btn btn-danger btn-sm" type="submit">Remove</button>
+                            <button type="submit" class="btn btn-sm btn-secondary">-</button>
+                        </form>
+
+                        <span class="mx-2">@item.Quantity</span>
+
+                        <form method="post" asp-controller="Cart" asp-action="Increase" class="d-inline">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-sm btn-secondary">+</button>
+                        </form>
+                    </td>
+                    <td>$@(item.Toy.Price* item.Quantity)</td>
+                    <td>
+                        <form method="post" asp-controller="Cart" asp-action="Remove">
+                            <input type="hidden" name="id" value="@item.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
                         </form>
                     </td>
                 </tr>
@@ -42,47 +55,27 @@ else
         </tbody>
     </table>
 
-    <div class="text-end mt-3">
-        <h4>Total: ¥@totalAmount</h4>
-        <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#checkoutModal">Proceed to Checkout</button>
-    </div>
+    <h4 class="mt-4">Settlement information</h4>
+    <form method="post" asp-controller="Cart" asp-action="Checkout">
+        <div class="form-group">
+            <label>Name：</label>
+            <input name="Name" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>Email：</label>
+            <input name="Email" class="form-control" required type="email" />
+        </div>
+        <div class="form-group">
+            <label>Address：</label>
+            <input name="Address" class="form-control" required />
+        </div>
+        <div class="form-group">
+            <label>：PaymentMethod</label>
+            <select name="PaymentMethod" class="form-control" required>
+                <option value="QR">Scan to pay</option>
+                <option value="Cash">Cash on delivery</option>
+            </select>
+        </div>
+        <button type="submit" class="btn btn-success mt-3">Submit the order</button>
+    </form>
 }
-
-<!-- ✅ Modal 弹窗支付表单 -->
-<div class="modal fade" id="checkoutModal" tabindex="-1" aria-labelledby="checkoutModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <form asp-action="Checkout" method="post" class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="checkoutModalLabel">Checkout Information</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="mb-3">
-                    <label>Name</label>
-                    <input type="text" class="form-control" name="Name" required />
-                </div>
-                <div class="mb-3">
-                    <label>Email</label>
-                    <input type="email" class="form-control" name="Email" required />
-                </div>
-                <div class="mb-3">
-                    <label>Address</label>
-                    <textarea class="form-control" name="Address" required></textarea>
-                </div>
-                <div class="mb-3">
-                    <label>Payment Method</label>
-                    <select class="form-select" name="PaymentMethod" required>
-                        <option value="card">Credit Card</option>
-                        <option value="qr">QR Code</option>
-                    </select>
-                </div>
-                <div class="alert alert-info">
-                    <strong>Total Amount: ¥@totalAmount</strong>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="submit" class="btn btn-primary">Confirm Payment</button>
-            </div>
-        </form>
-    </div>
-</div>

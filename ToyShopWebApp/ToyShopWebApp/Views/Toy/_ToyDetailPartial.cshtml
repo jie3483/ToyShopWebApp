@@ -1,17 +1,55 @@
-﻿@model ToyShopWebApp.Models.Toy
+﻿@using ToyShopWebApp.Models
+@{
+    var toy = ViewBag.Toy as Toy;
+    var reviews = ViewBag.Reviews as List<Review>;
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
 
-<div class="row">
-    <div class="col-md-6">
-        <img src="@Model.ImageUrl" alt="@Model.Name" class="detail-img" />
-    </div>
-    <div class="col-md-6">
-        <h3>@Model.Name</h3>
-        <p><strong>Price:</strong> ¥@Model.Price</p>
-        <p><strong>Description:</strong> @Model.Description</p>
+<h4>@toy.Name</h4>
+<img src="@toy.ImageUrl" alt="@toy.Name" class="img-fluid mb-3" style="max-height: 200px;" />
+<p><strong>Price:</strong> ¥@toy.Price</p>
+<p><strong>Description:</strong> @toy.Description</p>
+<p><strong>Details:</strong> @toy.LongDescription</p>
 
-        <form method="post" asp-controller="Cart" asp-action="AddToCart">
-            <input type="hidden" name="toyId" value="@Model.Id" />
-            <button type="submit" class="btn btn-success mt-3">Add to Cart</button>
-        </form>
+<hr />
+<h5>Leave a Review </h5>
+<form asp-action="SubmitReview" asp-controller="Toy" method="post">
+    <input type="hidden" name="toyId" value="@toy.Id" />
+    <div class="form-group">
+        <label>Rating (1-5)</label>
+        <input type="number" name="rating" class="form-control" min="1" max="5" required />
     </div>
-</div>
+    <div class="form-group">
+        <label>Comment</label>
+        <textarea name="comment" class="form-control" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-warning mt-2">Submit</button>
+</form>
+
+<hr />
+<h5 class="mt-4">User Reviews </h5>
+@if (reviews != null && reviews.Any())
+{
+    foreach (var r in reviews)
+    {
+        <div class="border rounded p-2 mb-2">
+            <div>
+                <strong>@r.User?.UserName</strong> - ⭐ @r.Rating / 5
+                @if (r.UserID == userId)
+                {
+                    <form asp-action="DeleteReview" asp-controller="Toy" method="post" class="d-inline float-end" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                        <input type="hidden" name="reviewId" value="@r.Id" />
+                        <input type="hidden" name="toyId" value="@toy.Id" />
+                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                    </form>
+                }
+            </div>
+            <div class="text-muted small">@r.CreatedAt.ToString("yyyy-MM-dd HH:mm")</div>
+            <div>@r.Comment</div>
+        </div>
+    }
+}
+else
+{
+    <p>No reviews yet.</p>
+}

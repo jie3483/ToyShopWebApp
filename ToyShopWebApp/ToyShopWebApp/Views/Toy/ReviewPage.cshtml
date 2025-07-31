@@ -1,0 +1,59 @@
+﻿@model ToyShopWebApp.Models.Toy
+@using ToyShopWebApp.Models
+@{
+    ViewData["Title"] = "Toy Details and Reviews";
+    var reviews = ViewBag.Reviews as List<Review>;
+}
+
+<div class="container mt-4">
+    <h2>@Model.Name</h2>
+    <img src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid mb-3" style="max-height: 250px;" />
+
+    <p><strong>Price:</strong> ¥@Model.Price</p>
+    <p><strong>Description:</strong> @Model.Description</p>
+    <p><strong>Details:</strong> @Model.LongDescription</p>
+
+    <hr />
+    <h4>Leave a Review </h4>
+    <form asp-action="SubmitReview" asp-controller="Toy" method="post">
+        <input type="hidden" name="toyId" value="@Model.Id" />
+        <div class="form-group mb-2">
+            <label>Rating (1-5)</label>
+            <input type="number" name="rating" class="form-control" min="1" max="5" required />
+        </div>
+        <div class="form-group mb-2">
+            <label>Comment</label>
+            <textarea name="comment" class="form-control" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-warning">Submit</button>
+    </form>
+
+    <hr />
+    <h4 class="mt-4">User Reviews </h4>
+
+    @if (reviews != null && reviews.Any())
+    {
+        foreach (var r in reviews)
+        {
+            <div class="border rounded p-2 mb-2">
+                <div>
+                    <strong>@r.User?.UserName</strong> - ⭐ @r.Rating / 5
+                    @if (r.UserID == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value)
+                    {
+                        <form asp-action="DeleteReview" asp-controller="Toy" method="post" class="d-inline float-end" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                            <input type="hidden" name="reviewId" value="@r.Id" />
+                            <input type="hidden" name="toyId" value="@Model.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger"> Delete</button>
+                        </form>
+                    }
+                </div>
+                <div class="text-muted small">@r.CreatedAt.ToString("yyyy-MM-dd HH:mm")</div>
+                <div>@r.Comment</div>
+            </div>
+        }
+    }
+    else
+    {
+        <p>No reviews yet.</p>
+    }
+</div>

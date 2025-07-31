@@ -1,36 +1,26 @@
 ﻿@model IEnumerable<ToyShopWebApp.Models.Toy>
-@{
-    ViewData["Title"] = "All Toys";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
-<h2 class="mb-4">All Toys</h2>
 
 <div class="row">
     @foreach (var toy in Model)
     {
         <div class="col-md-4 mb-4">
-            <div class="card shadow-sm h-100">
-                <img src="@toy.ImageUrl" alt="@toy.Name"class="img-fluid" style="height: 180px; object-fit: contain;" />
-                <div class="card-body d-flex flex-column justify-content-between">
+            <div class="card">
+                <img src="@toy.ImageUrl" alt="@toy.Name" class="card-img-top" style="height: 200px; object-fit: contain;" />
+                <div class="card-body">
                     <h5 class="card-title">@toy.Name</h5>
-                    <p class="card-text"><strong>Price:</strong> ¥@toy.Price</p>
-                    <button class="btn btn-warning w-100 mt-auto" onclick="showToyDetails(@toy.Id)">View Details</button>
+                    <p class="card-text">Price: ¥@toy.Price</p>
+                    <button class="btn btn-primary" onclick="loadToyDetail(@toy.Id)">View Details</button>
                 </div>
             </div>
         </div>
     }
 </div>
 
-<!-- 模态框 -->
-<div class="modal fade" id="toyDetailModal" tabindex="-1" aria-labelledby="toyDetailLabel" aria-hidden="true">
+<div class="modal fade" id="toyDetailModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Toy Details</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
             <div class="modal-body" id="toyDetailContent">
-                Loading...
+                <!-- 模态卡片内容 -->
             </div>
         </div>
     </div>
@@ -38,14 +28,11 @@
 
 @section Scripts {
     <script>
-        function showToyDetails(toyId) {
-            fetch('/Toy/DetailPartial/' + toyId)
-                .then(response => response.text())
-                .then(html => {
-                    document.getElementById("toyDetailContent").innerHTML = html;
-                    var myModal = new bootstrap.Modal(document.getElementById("toyDetailModal"));
-                    myModal.show();
-                });
+        function loadToyDetail(toyId) {
+            $.get("/Toy/DetailPartial/" + toyId, function (data) {
+                $("#toyDetailContent").html(data);
+                $("#toyDetailModal").modal('show');
+            });
         }
     </script>
 }

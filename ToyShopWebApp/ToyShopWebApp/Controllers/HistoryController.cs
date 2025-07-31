@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Security.Claims;
 using ToyShopWebApp.Data;
 using ToyShopWebApp.Models;
+using ToyShopWebApp.ViewModels;
 
 namespace ToyShopWebApp.Controllers
 {
@@ -23,15 +24,35 @@ namespace ToyShopWebApp.Controllers
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
+            // ✅ 加载浏览记录，包含时间
             var history = _context.BrowsingHistories
                 .Where(h => h.UserID == userId)
                 .Include(h => h.Toy)
                 .OrderByDescending(h => h.ViewedAt)
-                .Select(h => h.Toy)
                 .Take(10)
+                .Select(h => new HistoryViewModel
+                {
+                    Toy = h.Toy,
+                    ViewedAt = h.ViewedAt
+                })
                 .ToList();
 
-            return View(history); // View 要用 @model List<Toy>
+            return View(history); // @model List<HistoryViewModel>
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult ClearHistory()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null)
+                return RedirectToAction("Login", "Account");
+
+            var history = _context.BrowsingHistories.Where(h => h.UserID == userId);
+            _context.BrowsingHistories.RemoveRange(history);
+            _context.SaveChanges();
+
+            return RedirectToAction("Index");
         }
     }
 }
