@@ -12,8 +12,8 @@ using ToyShopWebApp.Data;
 namespace ToyShopWebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250731131159_AddReviewAndLongDescription")]
-    partial class AddReviewAndLongDescription
+    [Migration("20250801075425_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

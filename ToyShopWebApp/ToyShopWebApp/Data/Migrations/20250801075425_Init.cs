@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace ToyShopWebApp.Data.Migrations
 {
     /// <inheritdoc />
-    public partial class AddReviewAndLongDescription : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
