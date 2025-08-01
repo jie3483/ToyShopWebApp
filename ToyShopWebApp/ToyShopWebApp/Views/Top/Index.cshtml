@@ -13,7 +13,7 @@
             @foreach (var toy in Model)
             {
                 <li class="list-group-item d-flex align-items-center">
-                    <img src="~/images/@toy.ImageUrl" alt="@toy.Name" class="top-toy-img" style="width: 100px; height: auto;" />
+                    <img src="@toy.ImageUrl" alt="@toy.Name" class="top-toy-img" style="width: 100px; height: auto;" />
                     <div class="ms-3 flex-grow-1">
                         <h5 class="mb-1">@toy.Name</h5>
                         <div>

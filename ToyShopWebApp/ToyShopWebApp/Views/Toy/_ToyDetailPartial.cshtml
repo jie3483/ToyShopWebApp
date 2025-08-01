@@ -6,15 +6,10 @@
 }
 
 <h4>@toy.Name</h4>
-<img src="~/images/@toy.ImageUrl" alt="@toy.Name" class="img-fluid mb-3" style="max-height: 200px;" />
+<img src="@toy.ImageUrl" alt="@toy.Name" class="img-fluid mb-3" style="max-height: 200px;" />
 <p><strong>Price:</strong> ¥@toy.Price</p>
 <p><strong>Description:</strong> @toy.Description</p>
 <p><strong>Details:</strong> @toy.LongDescription</p>
-
-<form asp-action="AddToCart" asp-controller="Toy" method="post">
-    <input type="hidden" name="toyId" value="@toy.Id" />
-    <button type="submit" class="btn btn-warning mb-3">🛒 Add to Cart</button>
-</form>
 
 <hr />
 <h5>Leave a Review </h5>
