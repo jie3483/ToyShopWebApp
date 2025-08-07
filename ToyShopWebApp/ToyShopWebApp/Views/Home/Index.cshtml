@@ -6,46 +6,44 @@
 
 <div class="container mt-4">
     <div class="row">
-        <!-- 欢迎标题 -->
         <div class="col-12 text-center mb-4">
             <h1>Welcome to the Toy Sale Platform</h1>
         </div>
     </div>
 
     <div class="row">
-        <!-- 主内容区（可改为展示所有玩具） -->
+        <!-- ✅ 随机展示 Toys -->
         <div class="col-md-9">
             <h3 class="mb-3">Toys</h3>
             <div class="row">
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100">
-                        <img src="/images/hoop.jpg" class="card-img-top" alt="Basketball Hoop">
-                        <div class="card-body">
-                            <h5 class="card-title">Basketball Hoop</h5>
-                            <p class="card-text"><strong>$34.99</strong></p>
+                @foreach (var toy in Model)
+                {
+                    <div class="col-md-6 col-lg-4 mb-4">
+                        <div class="card h-100 text-center shadow-sm" style="padding: 10px;">
+                            <a asp-controller="Toy" asp-action="Detail" asp-route-id="@toy.Id">
+                                <img src="~/images/@toy.ImageUrl"
+                                     class="card-img-top mx-auto"
+                                     alt="@toy.Name"
+                                     style="width: 100%; height: 180px; object-fit: contain;" />
+                            </a>
+                            <div class="card-body">
+                                <h5 class="card-title" style="font-size: 1.1rem; font-weight: 600;">@toy.Name</h5>
+                                <p class="card-text" style="font-size: 1rem; color: #333;"><strong>¥@toy.Price</strong></p>
+                            </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="col-md-6 mb-4">
-                    <div class="card h-100">
-                        <img src="/images/teddy.jpg" class="card-img-top" alt="Teddy Bear">
-                        <div class="card-body">
-                            <h5 class="card-title">Teddy Bear</h5>
-                            <p class="card-text"><strong>$29.99</strong></p>
-                        </div>
-                    </div>
-                </div>
+                }
             </div>
         </div>
 
-        <!-- Top Toys (点击弹窗) -->
+
+        <!-- ✅ Top Toys 区块（点击弹窗） -->
         <div class="col-md-3">
             <h4 class="mb-3">Top Toys</h4>
             <ul class="list-group">
                 @if (Model != null && Model.Any())
                 {
-                    foreach (var toy in Model)
+                    foreach (var toy in Model.OrderByDescending(t => t.ClickCount).Take(5))
                     {
                         <li class="list-group-item d-flex justify-content-between align-items-center">
                             <a href="javascript:void(0);" class="top-toy-link" data-url="@Url.Action("DetailPartial", "Toy", new { id = toy.Id })">
@@ -61,33 +59,31 @@
                 }
             </ul>
         </div>
+    </div>
+</div>
 
-            <!-- 模态弹窗容器 -->
-        <!-- 🔍 模态弹窗容器 -->
-        <div class="modal fade" id="toyDetailModal" tabindex="-1" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-body" id="toyDetailContent">
-                        <!-- 内容通过 AJAX 加载 -->
-                    </div>
-                </div>
+<!-- 🔍 模态弹窗容器 -->
+<div class="modal fade" id="toyDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-body" id="toyDetailContent">
+                <!-- 内容通过 AJAX 加载 -->
             </div>
         </div>
     </div>
-  </div>
 </div>
-        @section Scripts {
-            <script>
-                $(document).ready(function () {
-                    $('.top-toy-link').click(function () {
-                        var url = $(this).data('url');
-                        $.get(url, function (data) {
-                            $('#toyDetailContent').html(data);
-                            var modal = new bootstrap.Modal(document.getElementById('toyDetailModal'));
-                            modal.show();
-                        });
-                    });
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('.top-toy-link').click(function () {
+                var url = $(this).data('url');
+                $.get(url, function (data) {
+                    $('#toyDetailContent').html(data);
+                    var modal = new bootstrap.Modal(document.getElementById('toyDetailModal'));
+                    modal.show();
                 });
-            </script>
-    }
-       
+            });
+        });
+    </script>
+}

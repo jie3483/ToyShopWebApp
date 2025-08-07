@@ -20,6 +20,8 @@ namespace ToyShopWebApp.Data
         public DbSet<ToyInventory> ToyInventories { get; set; }
         public DbSet<BrowsingHistory> BrowsingHistories { get; set; }
         public DbSet<Review> Reviews { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

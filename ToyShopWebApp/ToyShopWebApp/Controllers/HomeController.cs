@@ -1,4 +1,5 @@
 using System.Diagnostics;
+using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using ToyShopWebApp.Data;
 using ToyShopWebApp.Models;
@@ -18,15 +19,31 @@ namespace ToyShopWebApp.Controllers
             _context = context;
         }
 
-        // ? 首页加载点击最多的前 3 个玩具
+        // ? 首页随机展示 2–4 个玩具，刷新后变更
         public IActionResult Index()
         {
-            var topToys = _context.Toys
-                .OrderByDescending(t => t.ClickCount)
-                .Take(3)
-                .ToList();
+            const string sessionKey = "HomePageToys";
+            List<Toy> toysToDisplay;
 
-            return View(topToys); // ? 传递给视图：@model List<Toy>
+            if (HttpContext.Session.GetString(sessionKey) == null)
+            {
+                var allToys = _context.Toys.ToList();
+                var rnd = new Random();
+                var count = rnd.Next(2, 5); // 随机数量：2~4
+
+                var randomToys = allToys.OrderBy(t => Guid.NewGuid()).Take(count).ToList();
+                toysToDisplay = randomToys;
+
+                var json = JsonSerializer.Serialize(toysToDisplay);
+                HttpContext.Session.SetString(sessionKey, json);
+            }
+            else
+            {
+                var json = HttpContext.Session.GetString(sessionKey);
+                toysToDisplay = JsonSerializer.Deserialize<List<Toy>>(json);
+            }
+
+            return View(toysToDisplay); // @model List<Toy>
         }
 
         public IActionResult Privacy()

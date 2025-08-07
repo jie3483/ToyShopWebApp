@@ -3,6 +3,7 @@
     var toy = ViewBag.Toy as Toy;
     var reviews = ViewBag.Reviews as List<Review>;
     var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var hasPurchased = ViewBag.HasPurchased != null && (bool)ViewBag.HasPurchased;
 }
 
 <h4>@toy.Name</h4>
@@ -17,44 +18,58 @@
 </form>
 
 <hr />
-<h5>Leave a Review </h5>
-<form asp-action="SubmitReview" asp-controller="Toy" method="post">
-    <input type="hidden" name="toyId" value="@toy.Id" />
-    <div class="form-group">
-        <label>Rating (1-5)</label>
-        <input type="number" name="rating" class="form-control" min="1" max="5" required />
-    </div>
-    <div class="form-group">
-        <label>Comment</label>
-        <textarea name="comment" class="form-control" required></textarea>
-    </div>
-    <button type="submit" class="btn btn-warning mt-2">Submit</button>
-</form>
+<h5>Leave a Review</h5>
 
-<hr />
-<h5 class="mt-4">User Reviews </h5>
-@if (reviews != null && reviews.Any())
+@if (!User.Identity.IsAuthenticated)
 {
-    foreach (var r in reviews)
-    {
-        <div class="border rounded p-2 mb-2">
-            <div>
-                <strong>@r.User?.UserName</strong> - ⭐ @r.Rating / 5
-                @if (r.UserID == userId)
-                {
-                    <form asp-action="DeleteReview" asp-controller="Toy" method="post" class="d-inline float-end" onsubmit="return confirm('Are you sure you want to delete this review?');">
-                        <input type="hidden" name="reviewId" value="@r.Id" />
-                        <input type="hidden" name="toyId" value="@toy.Id" />
-                        <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                    </form>
-                }
-            </div>
-            <div class="text-muted small">@r.CreatedAt.ToString("yyyy-MM-dd HH:mm")</div>
-            <div>@r.Comment</div>
+    <p class="text-muted">Please <a asp-controller="Account" asp-action="Login">log in</a> to leave a review.</p>
+}
+else if (hasPurchased)
+{
+    <form asp-action="SubmitReview" asp-controller="Toy" method="post">
+        <input type="hidden" name="toyId" value="@toy.Id" />
+        <div class="form-group">
+            <label>Rating (1–5)</label>
+            <input type="number" name="rating" class="form-control" min="1" max="5" required />
         </div>
-    }
+        <div class="form-group">
+            <label>Comment</label>
+            <textarea name="comment" class="form-control" rows="3" required></textarea>
+        </div>
+        <button type="submit" class="btn btn-warning mt-2">Submit</button>
+    </form>
 }
 else
 {
-    <p>No reviews yet.</p>
+    <p class="text-danger">Only customers who purchased this toy can leave a review.</p>
 }
+
+<hr />
+<h5 class="mt-4">User Reviews</h5>
+<div style="max-height: 250px; overflow-y: auto; padding-right: 10px;">
+    @if (reviews != null && reviews.Any())
+    {
+        foreach (var r in reviews)
+        {
+            <div class="border rounded p-2 mb-2">
+                <div>
+                    <strong>@r.User?.UserName</strong> - ⭐ @r.Rating / 5
+                    @if (r.UserID == userId)
+                    {
+                        <form asp-action="DeleteReview" asp-controller="Toy" method="post" class="d-inline float-end" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                            <input type="hidden" name="reviewId" value="@r.Id" />
+                            <input type="hidden" name="toyId" value="@toy.Id" />
+                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                        </form>
+                    }
+                </div>
+                <div class="text-muted small">@r.CreatedAt.ToString("yyyy-MM-dd HH:mm")</div>
+                <div>@r.Comment</div>
+            </div>
+        }
+    }
+    else
+    {
+        <p class="text-muted">No reviews yet.</p>
+    }
+</div>

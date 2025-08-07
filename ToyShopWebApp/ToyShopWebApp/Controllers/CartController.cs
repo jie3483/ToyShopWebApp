@@ -75,7 +75,7 @@ namespace ToyShopWebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        // ✅ 新增：增加数量
+        // ✅ 增加数量
         [HttpPost]
         public IActionResult Increase(int id)
         {
@@ -88,7 +88,7 @@ namespace ToyShopWebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        // ✅ 新增：减少数量（为 1 时仍保留）
+        // ✅ 减少数量（为 1 时不再减）
         [HttpPost]
         public IActionResult Decrease(int id)
         {
@@ -101,6 +101,7 @@ namespace ToyShopWebApp.Controllers
             return RedirectToAction("Index");
         }
 
+        // ✅ 结账并写入订单 + 订单项
         [HttpPost]
         public IActionResult Checkout(string Name, string Email, string Address, string PaymentMethod)
         {
@@ -117,9 +118,9 @@ namespace ToyShopWebApp.Controllers
                 return RedirectToAction("Index");
 
             decimal totalAmount = cartItems.Sum(item => item.Toy.Price * item.Quantity);
-
             string orderNumber = $"ORD{DateTime.Now:yyyyMMddHHmmssfff}";
 
+            // 创建订单
             var order = new Order
             {
                 CustomerName = Name,
@@ -133,13 +134,27 @@ namespace ToyShopWebApp.Controllers
             };
 
             _context.Orders.Add(order);
-            _context.SaveChanges();
+            _context.SaveChanges(); // 生成 OrderID
 
+            // ✅ 添加订单项记录
+            foreach (var item in cartItems)
+            {
+                _context.OrderItems.Add(new OrderItem
+                {
+                    OrderID = order.OrderID,
+                    ToyID = item.ToyID,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.Toy.Price
+                });
+            }
+
+            // 清空购物车
             _context.CartItems.RemoveRange(cartItems);
             _context.SaveChanges();
 
+            // 跳转支付方式页面
             if (PaymentMethod == "QR")
-                return RedirectToAction("PayQR", new { orderNumber = orderNumber });
+                return RedirectToAction("QRCodePayment", new { orderNumber = orderNumber });
             else
                 return RedirectToAction("PaymentSuccess");
         }
@@ -155,7 +170,7 @@ namespace ToyShopWebApp.Controllers
             return View();
         }
 
-        public IActionResult PayQR(string orderNumber)
+        public IActionResult QRCodePayment(string orderNumber)
         {
             ViewBag.OrderNumber = orderNumber;
             return View();

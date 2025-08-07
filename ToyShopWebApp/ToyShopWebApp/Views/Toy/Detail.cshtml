@@ -1,0 +1,92 @@
+﻿@using ToyShopWebApp.Models
+@{
+    var toy = ViewBag.Toy as Toy;
+    var reviews = ViewBag.Reviews as List<Review>;
+    var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+    var hasPurchased = ViewBag.HasPurchased != null && (bool)ViewBag.HasPurchased;
+}
+
+@if (toy == null)
+{
+    <p class="text-danger">Toy not found.</p>
+}
+else
+{
+    <div class="container mt-4">
+        <h2>@toy.Name</h2>
+
+        <div class="row">
+            <div class="col-md-6">
+                <img src="~/images/@toy.ImageUrl" alt="@toy.Name" class="img-fluid mb-3" style="max-height: 300px;" />
+            </div>
+            <div class="col-md-6">
+                <p><strong>Price:</strong> ¥@toy.Price</p>
+                <p><strong>Description:</strong> @toy.Description</p>
+                <p><strong>Details:</strong> @toy.LongDescription</p>
+                <p><strong>Clicks:</strong> @toy.ClickCount</p>
+
+                <form asp-controller="Toy" asp-action="AddToCart" method="post">
+                    <input type="hidden" name="toyId" value="@toy.Id" />
+                    <button type="submit" class="btn btn-warning mb-3">Add to Cart</button>
+                </form>
+            </div>
+        </div>
+
+        <hr />
+        <h5>Leave a Review</h5>
+
+        @if (!User.Identity.IsAuthenticated)
+        {
+            <p class="text-muted">Please <a asp-controller="Account" asp-action="Login">log in</a> to leave a review.</p>
+        }
+        else if (hasPurchased)
+        {
+            <form asp-action="SubmitReview" asp-controller="Toy" method="post">
+                <input type="hidden" name="toyId" value="@toy.Id" />
+                <div class="form-group">
+                    <label>Rating (1–5)</label>
+                    <input type="number" name="rating" class="form-control" min="1" max="5" required />
+                </div>
+                <div class="form-group">
+                    <label>Comment</label>
+                    <textarea name="comment" class="form-control" rows="3" required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary mt-2">Submit Review</button>
+            </form>
+        }
+        else
+        {
+            <p class="text-danger">Only customers who purchased this toy can leave a review.</p>
+        }
+
+        <hr />
+        <h5>Recent Reviews</h5>
+        <div style="max-height: 300px; overflow-y: auto; padding-right: 10px;">
+            @if (reviews != null && reviews.Any())
+            {
+                foreach (var r in reviews)
+                {
+                    <div class="border rounded p-2 mb-2">
+                        <div>
+                            <strong>@r.User?.UserName</strong> - ⭐ @r.Rating / 5
+                            @if (r.UserID == userId)
+                            {
+                                <form asp-action="DeleteReview" asp-controller="Toy" method="post" class="d-inline float-end" onsubmit="return confirm('Are you sure you want to delete this review?');">
+                                    <input type="hidden" name="reviewId" value="@r.Id" />
+                                    <input type="hidden" name="toyId" value="@toy.Id" />
+                                    <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                </form>
+                            }
+                        </div>
+                        <div class="text-muted small">@r.CreatedAt.ToString("yyyy-MM-dd HH:mm")</div>
+                        <div>@r.Comment</div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p class="text-muted">No reviews yet.</p>
+            }
+        </div>
+    </div>
+}

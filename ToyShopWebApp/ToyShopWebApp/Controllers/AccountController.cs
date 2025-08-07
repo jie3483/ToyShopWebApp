@@ -9,11 +9,16 @@ namespace ToyShopWebApp.Controllers
     {
         private readonly UserManager<User> _userManager;
         private readonly SignInManager<User> _signInManager;
+        private readonly RoleManager<IdentityRole> _roleManager;
 
-        public AccountController(UserManager<User> userManager, SignInManager<User> signInManager)
+        public AccountController(
+            UserManager<User> userManager,
+            SignInManager<User> signInManager,
+            RoleManager<IdentityRole> roleManager)
         {
             _userManager = userManager;
             _signInManager = signInManager;
+            _roleManager = roleManager;
         }
 
         // GET: /Account/Register
@@ -50,6 +55,13 @@ namespace ToyShopWebApp.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
+                // ✅ 注册成功后自动添加角色：Customer
+                if (!await _roleManager.RoleExistsAsync("Customer"))
+                {
+                    await _roleManager.CreateAsync(new IdentityRole("Customer"));
+                }
+                await _userManager.AddToRoleAsync(user, "Customer");
+
                 await _signInManager.SignInAsync(user, isPersistent: false);
                 return RedirectToAction("Index", "Toy");
             }
