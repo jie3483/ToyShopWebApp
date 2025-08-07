@@ -55,7 +55,7 @@ namespace ToyShopWebApp.Controllers
             var result = await _userManager.CreateAsync(user, model.Password);
             if (result.Succeeded)
             {
-                // ✅ 注册成功后自动添加角色：Customer
+                // Automatically add role after successful registration: Customer
                 if (!await _roleManager.RoleExistsAsync("Customer"))
                 {
                     await _roleManager.CreateAsync(new IdentityRole("Customer"));

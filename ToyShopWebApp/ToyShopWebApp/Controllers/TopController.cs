@@ -23,7 +23,7 @@ namespace ToyShopWebApp.Controllers
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            // 先从浏览记录中读取
+            // Read from browsing history first
             var toyList = _context.BrowsingHistories
                 .Where(h => h.UserID == userId)
                 .Include(h => h.Toy)
@@ -32,7 +32,7 @@ namespace ToyShopWebApp.Controllers
                 .Distinct()
                 .ToList();
 
-            // 如果历史为空，默认显示点击数前5的热门玩具
+            // If the history is empty, the top 5 popular toys with the highest number of clicks will be displayed by default
             if (!toyList.Any())
             {
                 toyList = _context.Toys

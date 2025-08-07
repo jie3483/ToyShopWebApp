@@ -75,7 +75,7 @@ namespace ToyShopWebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        // ✅ 增加数量
+        // Increase quantity
         [HttpPost]
         public IActionResult Increase(int id)
         {
@@ -88,7 +88,7 @@ namespace ToyShopWebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        // ✅ 减少数量（为 1 时不再减）
+        // Reduce quantity (no further reduction when it is 1)
         [HttpPost]
         public IActionResult Decrease(int id)
         {
@@ -101,7 +101,7 @@ namespace ToyShopWebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        // ✅ 结账并写入订单 + 订单项
+        // Checkout and write the order+order item
         [HttpPost]
         public IActionResult Checkout(string Name, string Email, string Address, string PaymentMethod)
         {
@@ -120,7 +120,7 @@ namespace ToyShopWebApp.Controllers
             decimal totalAmount = cartItems.Sum(item => item.Toy.Price * item.Quantity);
             string orderNumber = $"ORD{DateTime.Now:yyyyMMddHHmmssfff}";
 
-            // 创建订单
+            // Create Order
             var order = new Order
             {
                 CustomerName = Name,
@@ -134,9 +134,9 @@ namespace ToyShopWebApp.Controllers
             };
 
             _context.Orders.Add(order);
-            _context.SaveChanges(); // 生成 OrderID
+            _context.SaveChanges();
 
-            // ✅ 添加订单项记录
+            // Add order item record
             foreach (var item in cartItems)
             {
                 _context.OrderItems.Add(new OrderItem
@@ -148,11 +148,11 @@ namespace ToyShopWebApp.Controllers
                 });
             }
 
-            // 清空购物车
+            // empty cart
             _context.CartItems.RemoveRange(cartItems);
             _context.SaveChanges();
 
-            // 跳转支付方式页面
+            // Jump to the payment method page
             if (PaymentMethod == "QR")
                 return RedirectToAction("QRCodePayment", new { orderNumber = orderNumber });
             else

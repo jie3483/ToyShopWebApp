@@ -11,7 +11,7 @@ namespace ToyShopWebApp.Controllers
     public class AdminController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<User> _userManager; // ✅ 新增字段
+        private readonly UserManager<User> _userManager; 
 
         public AdminController(ApplicationDbContext context, UserManager<User> userManager) // ✅ 注入
         {
@@ -19,20 +19,20 @@ namespace ToyShopWebApp.Controllers
             _userManager = userManager;
         }
 
-        // 后台主页
+        // Backend homepage
         public IActionResult Index()
         {
             return View();
         }
 
-        // ✅ 查看用户注册信息
+        // View user registration information
         public IActionResult Users()
         {
             var users = _userManager.Users.Cast<User>().ToList();
             return View(users);
         }
 
-        // ✅ 查看订单账单信息
+        // View order billing information
         public IActionResult Orders()
         {
             var orders = _context.Orders

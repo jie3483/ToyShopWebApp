@@ -23,39 +23,39 @@ namespace ToyShopWebApp.Controllers
             return View(toys);
         }
 
-        // ✅ 商品详情页面（全页加载）
+        // Product details page (full page loading)
         public IActionResult Detail(int id)
         {
             var toy = _context.Toys.FirstOrDefault(t => t.Id == id);
             if (toy == null) return NotFound();
 
-            // 点击统计
+            
             toy.ClickCount++;
             _context.SaveChanges();
 
-            // 当前用户
+            
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             bool hasPurchased = false;
 
-            // 判断是否购买
+            //Determine whether to purchase
             if (!string.IsNullOrEmpty(userId))
             {
                 hasPurchased = _context.Orders
                     .Include(o => o.OrderItems)
                     .Any(o => o.UserID == userId && o.OrderItems.Any(oi => oi.ToyID == id));
 
-                // 浏览记录
+                //Browse history
                 var history = _context.BrowsingHistories
     .FirstOrDefault(h => h.UserID == userId && h.ToyID == id);
 
                 if (history != null)
                 {
-                    // ✅ 已存在：更新时间
+                    // Already exists: Update time
                     history.ViewedAt = DateTime.Now;
                 }
                 else
                 {
-                    // ✅ 不存在：新增记录
+                    // Does not exist: New record added
                     _context.BrowsingHistories.Add(new BrowsingHistory
                     {
                         ToyID = id,
@@ -67,7 +67,7 @@ namespace ToyShopWebApp.Controllers
 
             }
 
-            // 加载评论
+            // Load comments
             var reviews = _context.Reviews
                 .Where(r => r.ToyID == id)
                 .Include(r => r.User)
@@ -81,7 +81,7 @@ namespace ToyShopWebApp.Controllers
             return View("Detail");
         }
 
-        // ✅ 模态弹窗详情视图（局部加载）
+        // Modal popup detail view (partial loading)
         public IActionResult DetailPartial(int id)
         {
             var toy = _context.Toys.FirstOrDefault(t => t.Id == id);
@@ -92,12 +92,10 @@ namespace ToyShopWebApp.Controllers
 
             if (!string.IsNullOrEmpty(userId))
             {
-                // ✅ 判断是否购买
                 hasPurchased = _context.Orders
                     .Include(o => o.OrderItems)
                     .Any(o => o.UserID == userId && o.OrderItems.Any(oi => oi.ToyID == id));
 
-                // ✅ 浏览记录：若已存在则更新时间，否则新增
                 var history = _context.BrowsingHistories
                     .FirstOrDefault(h => h.UserID == userId && h.ToyID == id);
 
@@ -115,7 +113,7 @@ namespace ToyShopWebApp.Controllers
                     });
                 }
 
-                // ✅ 点击数+1
+                // Click count+1
                 toy.ClickCount++;
 
                 _context.SaveChanges();
@@ -135,7 +133,7 @@ namespace ToyShopWebApp.Controllers
         }
 
 
-        // ✅ 加入购物车
+        // Add Cart
         [HttpPost]
         public IActionResult AddToCart(int toyId)
         {
@@ -162,7 +160,7 @@ namespace ToyShopWebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        // ✅ 提交评论（已购买用户才能提交）
+        // Submit a comment (only users who have already purchased can submit it)
         [HttpPost]
         public IActionResult SubmitReview(int toyId, int rating, string comment)
         {
@@ -170,7 +168,6 @@ namespace ToyShopWebApp.Controllers
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            // 检查是否购买
             var hasPurchased = _context.Orders
                 .Include(o => o.OrderItems)
                 .Any(o => o.UserID == userId && o.OrderItems.Any(oi => oi.ToyID == toyId));
@@ -196,7 +193,7 @@ namespace ToyShopWebApp.Controllers
             return RedirectToAction("Detail", new { id = toyId });
         }
 
-        // ✅ 删除评论（仅限本人）
+        // Delete comment (personal only)
         [HttpPost]
         public IActionResult DeleteReview(int reviewId, int toyId)
         {

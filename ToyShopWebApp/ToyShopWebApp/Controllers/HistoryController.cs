@@ -24,7 +24,7 @@ namespace ToyShopWebApp.Controllers
             if (userId == null)
                 return RedirectToAction("Login", "Account");
 
-            // ✅ 加载浏览记录，包含时间
+            // Load browsing history, including time
             var history = _context.BrowsingHistories
                 .Where(h => h.UserID == userId)
                 .Include(h => h.Toy)

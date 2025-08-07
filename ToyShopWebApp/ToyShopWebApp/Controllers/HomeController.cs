@@ -19,7 +19,7 @@ namespace ToyShopWebApp.Controllers
             _context = context;
         }
 
-        // ? 首页随机展示 2–4 个玩具，刷新后变更
+        // Randomly display 2-4 toys on the homepage, change after refreshing
         public IActionResult Index()
         {
             const string sessionKey = "HomePageToys";
@@ -29,7 +29,7 @@ namespace ToyShopWebApp.Controllers
             {
                 var allToys = _context.Toys.ToList();
                 var rnd = new Random();
-                var count = rnd.Next(2, 5); // 随机数量：2~4
+                var count = rnd.Next(2, 5); 
 
                 var randomToys = allToys.OrderBy(t => Guid.NewGuid()).Take(count).ToList();
                 toysToDisplay = randomToys;

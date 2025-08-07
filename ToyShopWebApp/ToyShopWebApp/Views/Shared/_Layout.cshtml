@@ -15,7 +15,7 @@
 </head>
 <body class="d-flex flex-column min-vh-100">
 
-    <!-- ✅ 顶部导航 -->
+    <!--  Top Navigation -->
     <header>
         <nav class="navbar navbar-expand-lg navbar-light bg-light shadow-sm">
             <div class="container">
@@ -38,7 +38,7 @@
                                 <span class="nav-link">Welcome, @UserManager.GetUserName(User)!</span>
                             </li>
 
-                            @* 如果是管理员，显示管理中心链接 *@
+                            @* If you are an administrator, display the management center link *@
                             @if (User.IsInRole("Admin"))
                             {
                                 <li class="nav-item">
@@ -68,26 +68,26 @@
         </nav>
     </header>
 
-    <!-- ✅ 主内容区域自动撑高 -->
+    <!--  Automatically raise the main content area -->
     <main class="container flex-grow-1 mt-3 pb-3">
         @RenderBody()
     </main>
 
-    <!-- ✅ 页脚总在底部 -->
+    <!--  The footer is always at the bottom -->
     <footer class="footer text-muted mt-4">
         <div class="container">
             &copy; 2025 - ToyShopWebApp - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
 
-    <!-- 脚本区 -->
+    <!-- Script Area -->
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
 
     @await RenderSectionAsync("Scripts", required: false)
 
-    <!-- Toast 提示 -->
+    <!-- Toast -->
     <div class="position-fixed bottom-0 end-0 p-3" style="z-index: 9999">
         <div id="toastSuccess" class="toast align-items-center text-white bg-success border-0" role="alert">
             <div class="d-flex">
