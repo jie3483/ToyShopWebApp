@@ -12,7 +12,7 @@ using ToyShopWebApp.Data;
 namespace ToyShopWebApp.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250801075425_Init")]
+    [Migration("20250801081655_Init")]
     partial class Init
     {
         /// <inheritdoc />
